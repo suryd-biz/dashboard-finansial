@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
 <head>
-    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suryadi Finance Pro</title>
@@ -16,19 +15,19 @@
     </style>
     <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 min-h-screen pb-24">
+<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 min-h-screen pb-24 relative">
 
-    <div class="bg-slate-900 dark:bg-black pb-32 pt-8 px-4 transition-colors">
+    <div class="bg-slate-900 dark:bg-black pb-32 pt-8 px-4 transition-colors duration-300">
         <div class="max-w-5xl mx-auto flex justify-between items-center text-white">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold tracking-tight">Financial Dashboard</h1>
                 <p class="text-slate-400 text-xs mt-1" id="date-now">Sinkronisasi terakhir...</p>
             </div>
             <div class="flex gap-3">
-                <button id="theme-toggle" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-xl transition active:scale-95">
+                <button id="theme-toggle" class="bg-slate-800 hover:bg-indigo-500 p-3 rounded-xl transition-colors active:scale-95">
                     <i class="fa-solid fa-moon" id="theme-icon"></i>
                 </button>
-                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 p-3 rounded-xl transition active:scale-95">
+                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 p-3 rounded-xl transition-colors active:scale-95">
                     <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
             </div>
@@ -36,18 +35,19 @@
     </div>
 
     <div class="max-w-5xl mx-auto -mt-20 px-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-6 sm:p-8 mb-6 border border-slate-100 dark:border-slate-700 text-center card-animate">
-            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2">Total Gabungan Aset</span>
-            <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 mt-2 truncate" id="total-saldo">Rp 0</h2>
-            <div id="total-diff" class="inline-block text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full card-animate">--</div>
+        
+        <div class="group bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-6 sm:p-8 mb-6 border border-slate-100 dark:border-slate-700 text-center cursor-pointer card-animate hover:-translate-y-1 hover:border-indigo-200 dark:hover:border-indigo-500 overflow-hidden">
+            <span class="text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-2 group-hover:text-indigo-500 transition-colors">Total Gabungan Aset</span>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 mt-2 truncate w-full" id="total-saldo">Rp 0</h2>
+            <div id="total-diff" class="inline-block text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full card-animate group-hover:scale-105">--</div>
         </div>
 
         <div id="accounts-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-8"></div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-slate-900 dark:text-white">Riwayat Transaksi</h3>
-                <span class="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg font-medium" id="page-info">Halaman 1</span>
+                <span class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 px-3 py-1.5 rounded-lg font-bold" id="page-info">Hal 1</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -57,142 +57,187 @@
                             <th class="px-4 py-4 font-bold text-right">Saldo Total</th>
                             <th class="px-4 py-4 font-bold text-right">Selisih</th>
                             <th class="px-4 py-4 font-bold">Keterangan</th>
+                            <th class="px-4 py-4 font-bold text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="history-body" class="divide-y divide-slate-50 dark:divide-slate-700"></tbody>
                 </table>
             </div>
-            <div class="px-6 py-4 flex justify-between items-center border-t border-slate-100 dark:border-slate-700">
-                <button onclick="changePage(-1)" id="btn-prev" class="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 disabled:opacity-30 transition active:scale-95">Prev</button>
-                <button onclick="changePage(1)" id="btn-next" class="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 disabled:opacity-30 transition active:scale-95">Next</button>
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
+                <button id="btn-prev" onclick="changePage(-1)" class="px-4 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg shadow-sm border hover:text-indigo-600 disabled:opacity-50">Prev</button>
+                <button id="btn-next" onclick="changePage(1)" class="px-4 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg shadow-sm border hover:text-indigo-600 disabled:opacity-50">Next</button>
             </div>
         </div>
     </div>
 
-    <button onclick="toggleModal()" class="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl transition active:scale-90 z-40">
+    <button onclick="openModalNew()" class="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-14 h-14 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all hover:scale-110 active:scale-90 z-40">
         <i class="fa-solid fa-plus"></i>
     </button>
 
-    <div id="modal-input" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div id="modal-input" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl p-6 shadow-2xl overflow-y-auto max-h-[90vh] border border-slate-200 dark:border-slate-700">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Update Saldo Baru</h3>
-                <button onclick="toggleModal()" class="text-slate-400 hover:text-rose-500 text-xl transition"><i class="fa-solid fa-xmark"></i></button>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white" id="modal-title">Update Saldo Baru</h3>
+                <button onclick="toggleModal()" class="text-slate-400 hover:text-rose-500 bg-slate-100 hover:bg-rose-50 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <form id="form-update" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="col-span-2">
                         <label class="block text-xs font-bold text-slate-400 mb-1">TANGGAL UPDATE</label>
-                        <input type="date" id="in-tanggal" required class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <input type="date" id="in-tanggal" required class="w-full bg-slate-50 border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
-                    <div><label class="text-[10px] font-bold text-slate-400">BNI</label><input type="number" id="in-bni" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">SEABANK</label><input type="number" id="in-seabank" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">BIBIT</label><input type="number" id="in-bibit" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">TUNAI</label><input type="number" id="in-tunai" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">FLIP</label><input type="number" id="in-flip" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">OVO</label><input type="number" id="in-ovo" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">SHOPEEPAY</label><input type="number" id="in-shopeepay" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">DANA</label><input type="number" id="in-dana" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">JAGO</label><input type="number" id="in-jago" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400">LAINNYA</label><input type="number" id="in-lain" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">BNI</label><input type="number" id="in-bni" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">SEABANK</label><input type="number" id="in-seabank" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">BIBIT</label><input type="number" id="in-bibit" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">TUNAI</label><input type="number" id="in-tunai" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">FLIP</label><input type="number" id="in-flip" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">OVO</label><input type="number" id="in-ovo" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">SHOPEEPAY</label><input type="number" id="in-shopeepay" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">DANA</label><input type="number" id="in-dana" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">JAGO</label><input type="number" id="in-jago" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">LAINNYA</label><input type="number" id="in-lain" class="w-full bg-slate-50 border p-3 rounded-xl outline-none"></div>
                     <div class="col-span-2">
                         <label class="text-xs font-bold text-slate-400">KETERANGAN</label>
-                        <input type="text" id="in-keterangan" placeholder="Contoh: Gaji, Top Up, atau PHO Project" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white">
+                        <input type="text" id="in-keterangan" placeholder="Contoh: Gaji" class="w-full bg-slate-50 border p-3 rounded-xl outline-none">
                     </div>
                 </div>
-                <button type="submit" id="btn-submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-4 rounded-2xl shadow-lg transition active:scale-95">SIMPAN DATA</button>
+                <button type="submit" id="btn-submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-4 rounded-2xl transition active:scale-95 mt-4">SIMPAN DATA</button>
             </form>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec'; // MASUKKAN URL ANDA
+
         const accountsList = [
             { id: 'bni', name: 'BNI' }, { id: 'seabank', name: 'SeaBank' }, { id: 'bibit', name: 'Bibit' }, 
             { id: 'tunai', name: 'Tunai' }, { id: 'flip', name: 'Flip' }, { id: 'ovo', name: 'Ovo' }, 
             { id: 'shopeepay', name: 'ShopeePay' }, { id: 'dana', name: 'DANA' }, { id: 'jago', name: 'Jago' }, { id: 'lain', name: 'Lain' }
         ];
 
-        let fullHistory = [], currentPage = 1, rowsPerPage = 10;
+        let fullHistory = [], latestData = {};
+        let currentPage = 1, rowsPerPage = 10;
+        let formAction = 'insert', editOriginalTanggal = '';
+
         const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+        
+        const createAccountCard = (acc, currentVal, prevVal) => {
+            const diff = currentVal - prevVal;
+            let diffHTML = `<p class="text-[10px] font-bold text-slate-400"><i class="fa-solid fa-minus"></i> Tetap</p>`;
+            if (diff > 0) diffHTML = `<p class="text-[10px] font-bold text-emerald-500">+${formatIDR(diff)}</p>`;
+            else if (diff < 0) diffHTML = `<p class="text-[10px] font-bold text-rose-500">-${formatIDR(Math.abs(diff))}</p>`;
+
+            return `<div class="group bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border shadow-sm hover:-translate-y-1 hover:bg-indigo-50 dark:hover:bg-slate-700 transition card-animate">
+                    <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase truncate">${acc.name}</p>
+                    <p class="font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate">${formatIDR(currentVal)}</p>${diffHTML}</div>`;
+        };
 
         async function loadData() {
             try {
-                document.getElementById('total-saldo').innerText = "Sync...";
+                if(fullHistory.length === 0) document.getElementById('total-saldo').innerText = "Memuat...";
                 const res = await fetch(API_URL);
                 const rawData = await res.json();
+                
                 const processedData = rawData.map((item, index) => {
                     const prior = index > 0 ? rawData[index - 1] : item;
                     item.change = item.total - prior.total;
                     return item;
                 });
-                const latest = processedData[processedData.length - 1];
-                const prev = processedData.length > 1 ? processedData[processedData.length - 2] : latest;
 
-                document.getElementById('total-saldo').innerText = formatIDR(latest.total);
-                document.getElementById('date-now').innerText = "Update: " + new Date(latest.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'});
+                latestData = processedData[processedData.length - 1] || {};
+                const prev = processedData.length > 1 ? processedData[processedData.length - 2] : latestData;
 
-                const tDiff = latest.total - prev.total;
+                document.getElementById('total-saldo').innerText = formatIDR(latestData.total || 0);
+                document.getElementById('date-now').innerText = "Update: " + (latestData.tanggal ? new Date(latestData.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'}) : '-');
+
+                const tDiff = (latestData.total || 0) - (prev.total || 0);
                 const tEl = document.getElementById('total-diff');
-                if(tDiff > 0) { tEl.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"; tEl.innerHTML = `↑ ${formatIDR(tDiff)}`; }
-                else if(tDiff < 0) { tEl.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"; tEl.innerHTML = `↓ ${formatIDR(Math.abs(tDiff))}`; }
-                else { tEl.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300"; tEl.innerHTML = `Stabil`; }
+                if(tDiff > 0) { tEl.className = "inline-block text-xs font-bold px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600"; tEl.innerHTML = `Naik ${formatIDR(tDiff)}`; }
+                else if(tDiff < 0) { tEl.className = "inline-block text-xs font-bold px-4 py-1.5 rounded-full bg-rose-50 text-rose-600"; tEl.innerHTML = `Turun ${formatIDR(Math.abs(tDiff))}`; }
+                else { tEl.className = "inline-block text-xs font-bold px-4 py-1.5 rounded-full bg-slate-100 text-slate-500"; tEl.innerHTML = `Stabil`; }
 
-                document.getElementById('accounts-grid').innerHTML = accountsList.map(acc => {
-                    const diff = latest[acc.id] - prev[acc.id];
-                    let diffTag = `<p class="text-[10px] text-slate-400">--</p>`;
-                    if(diff > 0) diffTag = `<p class="text-[10px] text-emerald-500 font-bold">+${formatIDR(diff)}</p>`;
-                    else if(diff < 0) diffTag = `<p class="text-[10px] text-rose-500 font-bold">-${formatIDR(Math.abs(diff))}</p>`;
-                    return `
-                        <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm card-animate hover:-translate-y-1">
-                            <p class="text-slate-400 text-[10px] font-bold uppercase truncate">${acc.name}</p>
-                            <p class="font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate">${formatIDR(latest[acc.id])}</p>
-                            ${diffTag}
-                        </div>
-                    `;
-                }).join('');
-
-                // Auto-fill form input dengan data terakhir
-                document.getElementById('in-tanggal').value = new Date().toISOString().split('T')[0];
-                accountsList.forEach(acc => document.getElementById(`in-${acc.id}`).value = latest[acc.id]);
+                document.getElementById('accounts-grid').innerHTML = accountsList.map(acc => createAccountCard(acc, latestData[acc.id] || 0, prev[acc.id] || 0)).join('');
 
                 fullHistory = processedData.reverse();
                 renderTable();
-            } catch (e) { console.error(e); }
+            } catch (e) { alert("Gagal memuat data dari Apps Script."); }
         }
 
         function renderTable() {
             const tbody = document.getElementById('history-body');
             tbody.innerHTML = '';
             const pageData = fullHistory.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
             pageData.forEach(item => {
-                const cColor = item.change > 0 ? 'text-emerald-500' : (item.change < 0 ? 'text-rose-500' : 'text-slate-300');
+                const changeClass = item.change > 0 ? 'text-emerald-500' : (item.change < 0 ? 'text-rose-500' : 'text-slate-300');
+                const changeIcon = item.change > 0 ? '↑' : (item.change < 0 ? '↓' : '•');
+
                 tbody.innerHTML += `
-                    <tr class="dark:hover:bg-slate-700/50 transition">
-                        <td class="px-4 py-4 text-[10px] text-slate-500 italic whitespace-nowrap">${new Date(item.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'})}</td>
-                        <td class="px-4 py-4 text-xs font-bold text-slate-800 dark:text-white text-right">${formatIDR(item.total)}</td>
-                        <td class="px-4 py-4 text-[10px] font-black text-right ${cColor}">${formatIDR(Math.abs(item.change))}</td>
+                    <tr class="hover:bg-indigo-50 dark:hover:bg-slate-700/80 transition-colors">
+                        <td class="px-4 py-4 text-xs font-medium text-slate-500 italic whitespace-nowrap">${new Date(item.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'})}</td>
+                        <td class="px-4 py-4 text-sm font-bold text-slate-800 dark:text-white text-right whitespace-nowrap">${formatIDR(item.total)}</td>
+                        <td class="px-4 py-4 text-[10px] font-black text-right ${changeClass} whitespace-nowrap">${changeIcon} ${formatIDR(Math.abs(item.change))}</td>
                         <td class="px-4 py-4 text-[10px] text-slate-500">${item.keterangan}</td>
+                        <td class="px-4 py-4 text-center whitespace-nowrap">
+                            <button onclick="openModalEdit('${item.raw_tanggal}')" class="text-indigo-500 hover:bg-indigo-100 p-2 rounded-lg transition mr-1" title="Edit"><i class="fa fa-pen"></i></button>
+                            <button onclick="deleteData('${item.raw_tanggal}')" class="text-rose-500 hover:bg-rose-100 p-2 rounded-lg transition" title="Hapus"><i class="fa fa-trash"></i></button>
+                        </td>
                     </tr>
                 `;
             });
-            document.getElementById('page-info').innerText = `Halaman ${currentPage}`;
+            document.getElementById('page-info').innerText = `Hal ${currentPage} dari ${Math.ceil(fullHistory.length / rowsPerPage) || 1}`;
             document.getElementById('btn-prev').disabled = currentPage === 1;
             document.getElementById('btn-next').disabled = currentPage >= Math.ceil(fullHistory.length / rowsPerPage);
         }
 
-        function changePage(dir) { currentPage += dir; renderTable(); }
+        function changePage(d) { currentPage += d; renderTable(); }
         function toggleModal() { document.getElementById('modal-input').classList.toggle('modal-active'); }
 
-        // Logic Pengiriman Data (POST)
+        // Buka form untuk Data Baru / Backdate
+        function openModalNew() {
+            formAction = 'insert';
+            document.getElementById('modal-title').innerText = "Catat Saldo (Baru/Backdate)";
+            document.getElementById('in-tanggal').value = new Date().toISOString().split('T')[0];
+            // Isi form dengan referensi saldo terakhir
+            accountsList.forEach(acc => document.getElementById(`in-${acc.id}`).value = latestData[acc.id] || 0);
+            document.getElementById('in-keterangan').value = "";
+            toggleModal();
+        }
+
+        // Buka form untuk Edit Data Lama
+        function openModalEdit(dateStr) {
+            formAction = 'update';
+            editOriginalTanggal = dateStr;
+            const targetData = fullHistory.find(d => d.raw_tanggal === dateStr);
+            
+            document.getElementById('modal-title').innerText = "Edit Data: " + dateStr;
+            document.getElementById('in-tanggal').value = dateStr;
+            accountsList.forEach(acc => document.getElementById(`in-${acc.id}`).value = targetData[acc.id] || 0);
+            document.getElementById('in-keterangan').value = targetData.keterangan === "-" ? "" : targetData.keterangan;
+            toggleModal();
+        }
+
+        // Fungsi Delete Data
+        async function deleteData(dateStr) {
+            if (!confirm(`Yakin ingin MENGHAPUS data pada tanggal ${dateStr}?`)) return;
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', tanggal: dateStr }) });
+                alert("Data berhasil dihapus!");
+                loadData();
+            } catch (err) { alert("Gagal menghapus data."); }
+        }
+
+        // Submit Form (Insert atau Update)
         document.getElementById('form-update').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
-            btn.innerText = "MENYIMPAN...";
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> MEMPROSES...`;
             btn.disabled = true;
 
             const payload = {
+                action: formAction,
+                original_tanggal: editOriginalTanggal,
                 tanggal: document.getElementById('in-tanggal').value,
                 keterangan: document.getElementById('in-keterangan').value || "-",
                 ...Object.fromEntries(accountsList.map(acc => [acc.id, Number(document.getElementById(`in-${acc.id}`).value) || 0]))
@@ -201,24 +246,20 @@
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 toggleModal();
-                loadData(); // Refresh data
-                alert("Data berhasil disimpan ke Google Sheets!");
-            } catch (err) {
-                alert("Gagal menyimpan data. Pastikan API Apps Script sudah di-deploy dengan benar.");
-            } finally {
-                btn.innerText = "SIMPAN DATA";
-                btn.disabled = false;
-            }
+                alert(formAction === 'insert' ? "Sukses mencatat data!" : "Sukses mengedit data!");
+                loadData();
+            } catch (err) { alert("Gagal menyimpan data."); } 
+            finally { btn.innerHTML = "SIMPAN DATA"; btn.disabled = false; }
         });
 
-        // Theme Logic
-        const toggleBtn = document.getElementById('theme-toggle'), tIcon = document.getElementById('theme-icon'), html = document.documentElement;
-        if (localStorage.theme === 'dark') { html.classList.add('dark'); tIcon.className = 'fa-solid fa-sun'; }
-        toggleBtn.addEventListener('click', () => {
+        // Theme Toggle
+        const themeBtn = document.getElementById('theme-toggle'), html = document.documentElement;
+        if (localStorage.theme === 'dark') { html.classList.add('dark'); document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun'); }
+        themeBtn.addEventListener('click', () => {
             html.classList.toggle('dark');
             const isDark = html.classList.contains('dark');
             localStorage.theme = isDark ? 'dark' : 'light';
-            tIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         });
 
         loadData();
