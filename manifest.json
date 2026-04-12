@@ -1,0 +1,9 @@
+{
+  "name": "Suryadi Finance Dashboard",
+  "short_name": "Uangku",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+}
