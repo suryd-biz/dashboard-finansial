@@ -3,79 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Keuangan</title>
+    <title>Suryadi Finance Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-50 min-h-screen pb-12">
 
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 class="text-2xl font-bold text-gray-800 text-center mb-2">Total Saldo</h1>
-        <p class="text-sm text-gray-500 text-center mb-6" id="last-update">Update terakhir: Mengambil data...</p>
+    <div class="bg-indigo-700 pb-32 pt-10 px-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center text-white">
+            <div>
+                <h1 class="text-xl font-semibold">Halo, Suryadi</h1>
+                <p class="text-indigo-200 text-sm" id="date-now">Memuat data...</p>
+            </div>
+            <button onclick="location.reload()" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition">
+                <i class="fa-solid fa-rotate"></i>
+            </button>
+        </div>
+    </div>
 
-        <div class="bg-blue-600 rounded-xl p-6 text-center text-white mb-6">
-            <p class="text-blue-100 text-sm mb-1">Total Keseluruhan</p>
-            <h2 class="text-4xl font-bold tracking-tight" id="total-saldo">Rp...</h2>
+    <div class="max-w-4xl mx-auto -mt-24 px-4">
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 mb-6 text-center">
+            <p class="text-slate-500 text-sm font-medium uppercase tracking-wider mb-2">Total Saldo Seluruhnya</p>
+            <h2 class="text-4xl md:text-5xl font-bold text-slate-800" id="total-saldo">Rp 0</h2>
+            <div id="change-indicator" class="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
+                </div>
         </div>
 
-        <div class="space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <span class="text-gray-600 font-medium">Bank BNI</span>
-                <span class="text-gray-900 font-semibold" id="bni-saldo">Rp...</span>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                <p class="text-slate-500 text-xs mb-1">Bank BNI</p>
+                <p class="font-bold text-slate-800" id="val-bni">Rp 0</p>
             </div>
-            <div class="flex justify-between items-center border-b pb-3">
-                <span class="text-gray-600 font-medium">SeaBank</span>
-                <span class="text-gray-900 font-semibold" id="seabank-saldo">Rp...</span>
+            <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                <p class="text-slate-500 text-xs mb-1">SeaBank</p>
+                <p class="font-bold text-slate-800" id="val-seabank">Rp 0</p>
             </div>
-            <div class="flex justify-between items-center pb-2">
-                <span class="text-gray-600 font-medium">Bibit</span>
-                <span class="text-gray-900 font-semibold" id="bibit-saldo">Rp...</span>
+            <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                <p class="text-slate-500 text-xs mb-1">Bibit</p>
+                <p class="font-bold text-slate-800" id="val-bibit">Rp 0</p>
             </div>
-            <div class="flex justify-between items-center pb-2">
-                <span class="text-gray-600 font-medium">Cash</span>
-                <span class="text-gray-900 font-semibold" id="bibit-saldo">Rp...</span>
+            <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                <p class="text-slate-500 text-xs mb-1">Tunai</p>
+                <p class="font-bold text-slate-800" id="val-tunai">Rp 0</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800">Riwayat Perubahan</h3>
+                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">10 Terakhir</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                            <th class="px-6 py-3 font-semibold">Tanggal</th>
+                            <th class="px-6 py-3 font-semibold">Total Saldo</th>
+                            <th class="px-6 py-3 font-semibold">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body" class="divide-y divide-slate-100">
+                        </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <script>
-        // MASUKKAN URL APPS SCRIPT DI BAWAH INI
+        // GANTI DENGAN URL APPS SCRIPT ANDA
         const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec';
 
-        // Fungsi format Rupiah
-        const formatRupiah = (angka) => {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        const formatIDR = (num) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
         };
 
-        // Fungsi format Tanggal
-        const formatDate = (tanggalString) => {
-            const date = new Date(tanggalString);
-            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        const formatDate = (dateStr) => {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
         };
 
-        // Mengambil data dari Google Sheets
-        fetch(API_URL)
-            .then(response => response.json())
-            .then(data => {
-                const bni = Number(data.bni) || 0;
-                const seabank = Number(data.seabank) || 0;
-                const bibit = Number(data.bibit) || 0;
-                const total = bni + seabank + bibit;
+        async function loadData() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
 
-                document.getElementById('bni-saldo').innerText = formatRupiah(bni);
-                document.getElementById('seabank-saldo').innerText = formatRupiah(seabank);
-                document.getElementById('bibit-saldo').innerText = formatRupiah(bibit);
-                document.getElementById('total-saldo').innerText = formatRupiah(total);
-                
-                if(data.tanggal) {
-                    document.getElementById('last-update').innerText = 'Update terakhir: ' + formatDate(data.tanggal);
-                } else {
-                     document.getElementById('last-update').innerText = 'Data berhasil ditarik.';
+                if(data.error) throw new Error(data.error);
+
+                // Update Saldo Utama
+                const latest = data.latest;
+                document.getElementById('total-saldo').innerText = formatIDR(latest.total);
+                document.getElementById('val-bni').innerText = formatIDR(latest.bni);
+                document.getElementById('val-seabank').innerText = formatIDR(latest.seabank);
+                document.getElementById('val-bibit').innerText = formatIDR(latest.bibit);
+                document.getElementById('val-tunai').innerText = formatIDR(latest.tunai);
+                document.getElementById('date-now').innerText = "Data per " + new Date(latest.tanggal).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+
+                // Hitung Perubahan (Selisih dengan data sebelumnya)
+                if (data.history.length > 1) {
+                    const diff = data.history[0].total - data.history[1].total;
+                    const indicator = document.getElementById('change-indicator');
+                    if (diff > 0) {
+                        indicator.classList.add('bg-green-100', 'text-green-700');
+                        indicator.innerHTML = `<i class="fa-solid fa-arrow-up mr-1"></i> Naik ${formatIDR(diff)}`;
+                    } else if (diff < 0) {
+                        indicator.classList.add('bg-red-100', 'text-red-700');
+                        indicator.innerHTML = `<i class="fa-solid fa-arrow-down mr-1"></i> Turun ${formatIDR(Math.abs(diff))}`;
+                    } else {
+                        indicator.classList.add('bg-slate-100', 'text-slate-600');
+                        indicator.innerHTML = `Tidak ada perubahan`;
+                    }
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('last-update').innerText = 'Gagal mengambil data.';
-            });
+
+                // Render History
+                const tbody = document.getElementById('history-body');
+                tbody.innerHTML = '';
+                data.history.forEach((item) => {
+                    const row = `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 text-sm text-slate-600">${formatDate(item.tanggal)}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-slate-800">${formatIDR(item.total)}</td>
+                            <td class="px-6 py-4 text-sm text-slate-500">${item.keterangan}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+
+            } catch (err) {
+                console.error(err);
+                alert("Gagal memuat data. Pastikan URL API benar.");
+            }
+        }
+
+        loadData();
     </script>
 </body>
 </html>
