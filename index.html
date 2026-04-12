@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Keuangan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h1 class="text-2xl font-bold text-gray-800 text-center mb-2">Total Saldo</h1>
+        <p class="text-sm text-gray-500 text-center mb-6" id="last-update">Update terakhir: Mengambil data...</p>
+
+        <div class="bg-blue-600 rounded-xl p-6 text-center text-white mb-6">
+            <p class="text-blue-100 text-sm mb-1">Total Keseluruhan</p>
+            <h2 class="text-4xl font-bold tracking-tight" id="total-saldo">Rp...</h2>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <span class="text-gray-600 font-medium">Bank BNI</span>
+                <span class="text-gray-900 font-semibold" id="bni-saldo">Rp...</span>
+            </div>
+            <div class="flex justify-between items-center border-b pb-3">
+                <span class="text-gray-600 font-medium">SeaBank</span>
+                <span class="text-gray-900 font-semibold" id="seabank-saldo">Rp...</span>
+            </div>
+            <div class="flex justify-between items-center pb-2">
+                <span class="text-gray-600 font-medium">Bibit</span>
+                <span class="text-gray-900 font-semibold" id="bibit-saldo">Rp...</span>
+            </div>
+            <div class="flex justify-between items-center pb-2">
+                <span class="text-gray-600 font-medium">Cash</span>
+                <span class="text-gray-900 font-semibold" id="bibit-saldo">Rp...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MASUKKAN URL APPS SCRIPT DI BAWAH INI
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec';
+
+        // Fungsi format Rupiah
+        const formatRupiah = (angka) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        };
+
+        // Fungsi format Tanggal
+        const formatDate = (tanggalString) => {
+            const date = new Date(tanggalString);
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        };
+
+        // Mengambil data dari Google Sheets
+        fetch(API_URL)
+            .then(response => response.json())
+            .then(data => {
+                const bni = Number(data.bni) || 0;
+                const seabank = Number(data.seabank) || 0;
+                const bibit = Number(data.bibit) || 0;
+                const total = bni + seabank + bibit;
+
+                document.getElementById('bni-saldo').innerText = formatRupiah(bni);
+                document.getElementById('seabank-saldo').innerText = formatRupiah(seabank);
+                document.getElementById('bibit-saldo').innerText = formatRupiah(bibit);
+                document.getElementById('total-saldo').innerText = formatRupiah(total);
+                
+                if(data.tanggal) {
+                    document.getElementById('last-update').innerText = 'Update terakhir: ' + formatDate(data.tanggal);
+                } else {
+                     document.getElementById('last-update').innerText = 'Data berhasil ditarik.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('last-update').innerText = 'Gagal mengambil data.';
+            });
+    </script>
+</body>
+</html>
