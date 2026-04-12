@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
 <head>
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suryadi Asset Tracker</title>
+    <title>Suryadi Finance Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        /* Memastikan animasi transisi berjalan mulus */
-        .card-animate {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .card-animate { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal-active { display: flex !important; animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 min-h-screen pb-12">
+<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 min-h-screen pb-24">
 
-    <div class="bg-slate-900 dark:bg-black pb-32 pt-8 px-4 transition-colors duration-300">
+    <div class="bg-slate-900 dark:bg-black pb-32 pt-8 px-4 transition-colors">
         <div class="max-w-5xl mx-auto flex justify-between items-center text-white">
             <div>
-                <h1 class="text-xl md:text-2xl font-bold tracking-tight">Finansial Suryadi</h1>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight">Financial Dashboard</h1>
                 <p class="text-slate-400 text-xs mt-1" id="date-now">Sinkronisasi terakhir...</p>
             </div>
             <div class="flex gap-3">
                 <button id="theme-toggle" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-xl transition active:scale-95">
                     <i class="fa-solid fa-moon" id="theme-icon"></i>
                 </button>
-                <button onclick="location.reload()" class="bg-indigo-600 hover:bg-indigo-500 p-3 rounded-xl transition active:scale-95">
+                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 p-3 rounded-xl transition active:scale-95">
                     <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
             </div>
@@ -39,15 +36,13 @@
     </div>
 
     <div class="max-w-5xl mx-auto -mt-20 px-4">
-        
-        <div class="group bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none p-6 sm:p-8 mb-6 border border-slate-100 dark:border-slate-700 text-center cursor-pointer card-animate hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
-            <span class="text-slate-400 dark:text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-2 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors">Total Gabungan Aset</span>
-            <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 mt-2 truncate w-full" id="total-saldo" title="Rp 0">Rp 0</h2>
-            <div id="total-diff" class="inline-block text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full card-animate group-hover:scale-105">--</div>
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-6 sm:p-8 mb-6 border border-slate-100 dark:border-slate-700 text-center card-animate">
+            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2">Total Gabungan Aset</span>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 mt-2 truncate" id="total-saldo">Rp 0</h2>
+            <div id="total-diff" class="inline-block text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full card-animate">--</div>
         </div>
 
-        <div id="accounts-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-            </div>
+        <div id="accounts-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-8"></div>
 
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
             <div class="px-6 py-5 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
@@ -57,169 +52,173 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50/50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 text-[10px] uppercase tracking-tighter">
-                            <th class="px-4 sm:px-6 py-4 font-bold">Tanggal</th>
-                            <th class="px-4 sm:px-6 py-4 font-bold text-right">Saldo Total</th>
-                            <th class="px-4 sm:px-6 py-4 font-bold text-right">Selisih</th>
-                            <th class="px-4 sm:px-6 py-4 font-bold">Keterangan</th>
+                        <tr class="bg-slate-50/50 dark:bg-slate-800 text-slate-400 text-[10px] uppercase">
+                            <th class="px-4 py-4 font-bold">Tanggal</th>
+                            <th class="px-4 py-4 font-bold text-right">Saldo Total</th>
+                            <th class="px-4 py-4 font-bold text-right">Selisih</th>
+                            <th class="px-4 py-4 font-bold">Keterangan</th>
                         </tr>
                     </thead>
-                    <tbody id="history-body" class="divide-y divide-slate-50 dark:divide-slate-700">
-                        </tbody>
+                    <tbody id="history-body" class="divide-y divide-slate-50 dark:divide-slate-700"></tbody>
                 </table>
             </div>
-            
-            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center border-t border-slate-100 dark:border-slate-700">
-                <button id="btn-prev" onclick="changePage(-1)" class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-600 transition active:scale-95">
-                    <i class="fa-solid fa-chevron-left mr-1"></i> Prev
-                </button>
-                <button id="btn-next" onclick="changePage(1)" class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-600 transition active:scale-95">
-                    Next <i class="fa-solid fa-chevron-right ml-1"></i>
-                </button>
+            <div class="px-6 py-4 flex justify-between items-center border-t border-slate-100 dark:border-slate-700">
+                <button onclick="changePage(-1)" id="btn-prev" class="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 disabled:opacity-30 transition active:scale-95">Prev</button>
+                <button onclick="changePage(1)" id="btn-next" class="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 disabled:opacity-30 transition active:scale-95">Next</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // MASUKKAN URL APPS SCRIPT ANDA DI SINI
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec';
+    <button onclick="toggleModal()" class="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl transition active:scale-90 z-40">
+        <i class="fa-solid fa-plus"></i>
+    </button>
 
+    <div id="modal-input" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Update Saldo Baru</h3>
+                <button onclick="toggleModal()" class="text-slate-400 hover:text-rose-500 text-xl transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="form-update" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-400 mb-1">TANGGAL UPDATE</label>
+                        <input type="date" id="in-tanggal" required class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div><label class="text-[10px] font-bold text-slate-400">BNI</label><input type="number" id="in-bni" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">SEABANK</label><input type="number" id="in-seabank" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">BIBIT</label><input type="number" id="in-bibit" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">TUNAI</label><input type="number" id="in-tunai" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">FLIP</label><input type="number" id="in-flip" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">OVO</label><input type="number" id="in-ovo" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">SHOPEEPAY</label><input type="number" id="in-shopeepay" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">DANA</label><input type="number" id="in-dana" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">JAGO</label><input type="number" id="in-jago" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400">LAINNYA</label><input type="number" id="in-lain" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white"></div>
+                    <div class="col-span-2">
+                        <label class="text-xs font-bold text-slate-400">KETERANGAN</label>
+                        <input type="text" id="in-keterangan" placeholder="Contoh: Gaji, Top Up, atau PHO Project" class="w-full bg-slate-50 dark:bg-slate-700 border-0 rounded-xl p-3 text-slate-900 dark:text-white">
+                    </div>
+                </div>
+                <button type="submit" id="btn-submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-4 rounded-2xl shadow-lg transition active:scale-95">SIMPAN DATA</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec';
         const accountsList = [
-            { id: 'bni', name: 'BNI' }, { id: 'seabank', name: 'SeaBank' },
-            { id: 'bibit', name: 'Bibit' }, { id: 'tunai', name: 'Tunai' },
-            { id: 'flip', name: 'Flip' }, { id: 'ovo', name: 'Ovo' },
-            { id: 'shopeepay', name: 'ShopeePay' }, { id: 'dana', name: 'DANA' },
-            { id: 'jago', name: 'Jago' }, { id: 'lain', name: 'Akun Lain' }
+            { id: 'bni', name: 'BNI' }, { id: 'seabank', name: 'SeaBank' }, { id: 'bibit', name: 'Bibit' }, 
+            { id: 'tunai', name: 'Tunai' }, { id: 'flip', name: 'Flip' }, { id: 'ovo', name: 'Ovo' }, 
+            { id: 'shopeepay', name: 'ShopeePay' }, { id: 'dana', name: 'DANA' }, { id: 'jago', name: 'Jago' }, { id: 'lain', name: 'Lain' }
         ];
 
-        let fullHistory = [];
-        let currentPage = 1;
-        const rowsPerPage = 10;
-
+        let fullHistory = [], currentPage = 1, rowsPerPage = 10;
         const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
-        
-        // Fungsi membuat Card Bank (Dengan Hover, Animasi Klik, dan Anti-Overlap)
-        const createAccountCard = (acc, currentVal, prevVal) => {
-            const diff = currentVal - prevVal;
-            let diffHTML = `<p class="text-[10px] font-bold text-slate-400 dark:text-slate-500"><i class="fa-solid fa-minus"></i> Tetap</p>`;
-            
-            if (diff > 0) {
-                diffHTML = `<p class="text-[10px] font-bold text-emerald-500 dark:text-emerald-400"><i class="fa-solid fa-caret-up"></i> +${formatIDR(diff)}</p>`;
-            } else if (diff < 0) {
-                diffHTML = `<p class="text-[10px] font-bold text-rose-500 dark:text-rose-400"><i class="fa-solid fa-caret-down"></i> -${formatIDR(Math.abs(diff))}</p>`;
-            }
-
-            return `
-                <div class="group bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm cursor-pointer overflow-hidden flex flex-col justify-center card-animate hover:-translate-y-1 hover:shadow-md hover:bg-indigo-50 dark:hover:bg-slate-700 active:scale-95 active:bg-indigo-100 dark:active:bg-slate-600">
-                    <p class="text-slate-400 dark:text-slate-400 text-[10px] sm:text-xs font-bold mb-1 uppercase tracking-wider group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate w-full">${acc.name}</p>
-                    <p class="font-bold text-slate-900 dark:text-white text-sm sm:text-base mb-1 truncate w-full" title="${formatIDR(currentVal)}">${formatIDR(currentVal)}</p>
-                    ${diffHTML}
-                </div>
-            `;
-        };
 
         async function loadData() {
             try {
-                document.getElementById('total-saldo').innerText = "Memuat...";
+                document.getElementById('total-saldo').innerText = "Sync...";
                 const res = await fetch(API_URL);
                 const rawData = await res.json();
-                
                 const processedData = rawData.map((item, index) => {
                     const prior = index > 0 ? rawData[index - 1] : item;
                     item.change = item.total - prior.total;
                     return item;
                 });
-
                 const latest = processedData[processedData.length - 1];
                 const prev = processedData.length > 1 ? processedData[processedData.length - 2] : latest;
 
-                // 1. Update UI Total
-                const totalEl = document.getElementById('total-saldo');
-                totalEl.innerText = formatIDR(latest.total);
-                totalEl.title = formatIDR(latest.total); // Tooltip agar bisa dilihat utuh jika terpotong
+                document.getElementById('total-saldo').innerText = formatIDR(latest.total);
                 document.getElementById('date-now').innerText = "Update: " + new Date(latest.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'});
 
                 const tDiff = latest.total - prev.total;
                 const tEl = document.getElementById('total-diff');
-                if(tDiff > 0) { tEl.className = "inline-block text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 card-animate group-hover:scale-105"; tEl.innerHTML = `Naik ${formatIDR(tDiff)}`; }
-                else if(tDiff < 0) { tEl.className = "inline-block text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 card-animate group-hover:scale-105"; tEl.innerHTML = `Turun ${formatIDR(Math.abs(tDiff))}`; }
-                else { tEl.className = "inline-block text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 card-animate group-hover:scale-105"; tEl.innerHTML = `Stabil`; }
+                if(tDiff > 0) { tEl.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"; tEl.innerHTML = `↑ ${formatIDR(tDiff)}`; }
+                else if(tDiff < 0) { tEl.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"; tEl.innerHTML = `↓ ${formatIDR(Math.abs(tDiff))}`; }
+                else { tEl.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300"; tEl.innerHTML = `Stabil`; }
 
-                // 2. Render Grid Akun
-                const gridHtml = accountsList.map(acc => createAccountCard(acc, latest[acc.id], prev[acc.id])).join('');
-                document.getElementById('accounts-grid').innerHTML = gridHtml;
+                document.getElementById('accounts-grid').innerHTML = accountsList.map(acc => {
+                    const diff = latest[acc.id] - prev[acc.id];
+                    let diffTag = `<p class="text-[10px] text-slate-400">--</p>`;
+                    if(diff > 0) diffTag = `<p class="text-[10px] text-emerald-500 font-bold">+${formatIDR(diff)}</p>`;
+                    else if(diff < 0) diffTag = `<p class="text-[10px] text-rose-500 font-bold">-${formatIDR(Math.abs(diff))}</p>`;
+                    return `
+                        <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm card-animate hover:-translate-y-1">
+                            <p class="text-slate-400 text-[10px] font-bold uppercase truncate">${acc.name}</p>
+                            <p class="font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate">${formatIDR(latest[acc.id])}</p>
+                            ${diffTag}
+                        </div>
+                    `;
+                }).join('');
 
-                // 3. Persiapkan Pagination Riwayat
+                // Auto-fill form input dengan data terakhir
+                document.getElementById('in-tanggal').value = new Date().toISOString().split('T')[0];
+                accountsList.forEach(acc => document.getElementById(`in-${acc.id}`).value = latest[acc.id]);
+
                 fullHistory = processedData.reverse();
                 renderTable();
-
-            } catch (e) { 
-                console.error(e);
-                alert("Gagal memuat data. Periksa kembali URL API Apps Script."); 
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Fungsi Render Tabel Sesuai Halaman
         function renderTable() {
             const tbody = document.getElementById('history-body');
             tbody.innerHTML = '';
-
-            const startIndex = (currentPage - 1) * rowsPerPage;
-            const endIndex = startIndex + rowsPerPage;
-            const pageData = fullHistory.slice(startIndex, endIndex);
-
+            const pageData = fullHistory.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
             pageData.forEach(item => {
-                const changeClass = item.change > 0 ? 'text-emerald-500 dark:text-emerald-400' : (item.change < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-300 dark:text-slate-500');
-                const changeIcon = item.change > 0 ? '↑' : (item.change < 0 ? '↓' : '•');
-
+                const cColor = item.change > 0 ? 'text-emerald-500' : (item.change < 0 ? 'text-rose-500' : 'text-slate-300');
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition duration-200">
-                        <td class="px-4 sm:px-6 py-4 text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 italic whitespace-nowrap">
-                            ${new Date(item.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})}
-                        </td>
-                        <td class="px-4 sm:px-6 py-4 text-xs sm:text-sm font-bold text-slate-800 dark:text-white text-right whitespace-nowrap">
-                            ${formatIDR(item.total)}
-                        </td>
-                        <td class="px-4 sm:px-6 py-4 text-[10px] font-black text-right ${changeClass} whitespace-nowrap">
-                            ${changeIcon} ${formatIDR(Math.abs(item.change))}
-                        </td>
-                        <td class="px-4 sm:px-6 py-4 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">
-                            ${item.keterangan}
-                        </td>
+                    <tr class="dark:hover:bg-slate-700/50 transition">
+                        <td class="px-4 py-4 text-[10px] text-slate-500 italic whitespace-nowrap">${new Date(item.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'})}</td>
+                        <td class="px-4 py-4 text-xs font-bold text-slate-800 dark:text-white text-right">${formatIDR(item.total)}</td>
+                        <td class="px-4 py-4 text-[10px] font-black text-right ${cColor}">${formatIDR(Math.abs(item.change))}</td>
+                        <td class="px-4 py-4 text-[10px] text-slate-500">${item.keterangan}</td>
                     </tr>
                 `;
             });
-
-            const totalPages = Math.ceil(fullHistory.length / rowsPerPage);
-            document.getElementById('page-info').innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
+            document.getElementById('page-info').innerText = `Halaman ${currentPage}`;
             document.getElementById('btn-prev').disabled = currentPage === 1;
-            document.getElementById('btn-next').disabled = currentPage >= totalPages || totalPages === 0;
+            document.getElementById('btn-next').disabled = currentPage >= Math.ceil(fullHistory.length / rowsPerPage);
         }
 
-        function changePage(direction) {
-            currentPage += direction;
-            renderTable();
-        }
+        function changePage(dir) { currentPage += dir; renderTable(); }
+        function toggleModal() { document.getElementById('modal-input').classList.toggle('modal-active'); }
 
-        // --- Logika Dark Mode ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const html = document.documentElement;
+        // Logic Pengiriman Data (POST)
+        document.getElementById('form-update').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            btn.innerText = "MENYIMPAN...";
+            btn.disabled = true;
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            themeIcon.classList.replace('fa-moon', 'fa-sun');
-        }
+            const payload = {
+                tanggal: document.getElementById('in-tanggal').value,
+                keterangan: document.getElementById('in-keterangan').value || "-",
+                ...Object.fromEntries(accountsList.map(acc => [acc.id, Number(document.getElementById(`in-${acc.id}`).value) || 0]))
+            };
 
-        themeToggleBtn.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            if (html.classList.contains('dark')) {
-                localStorage.theme = 'dark';
-                themeIcon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                localStorage.theme = 'light';
-                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                toggleModal();
+                loadData(); // Refresh data
+                alert("Data berhasil disimpan ke Google Sheets!");
+            } catch (err) {
+                alert("Gagal menyimpan data. Pastikan API Apps Script sudah di-deploy dengan benar.");
+            } finally {
+                btn.innerText = "SIMPAN DATA";
+                btn.disabled = false;
             }
+        });
+
+        // Theme Logic
+        const toggleBtn = document.getElementById('theme-toggle'), tIcon = document.getElementById('theme-icon'), html = document.documentElement;
+        if (localStorage.theme === 'dark') { html.classList.add('dark'); tIcon.className = 'fa-solid fa-sun'; }
+        toggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            tIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         });
 
         loadData();
