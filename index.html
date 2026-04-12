@@ -39,7 +39,7 @@
                     <i class="fa-solid fa-moon text-indigo-100" id="theme-icon"></i>
                 </button>
                 <button onclick="loadData()" class="bg-white text-indigo-600 hover:bg-indigo-50 dark:bg-indigo-500 dark:text-white dark:hover:bg-indigo-400 p-3.5 rounded-2xl transition-all active:scale-90 shadow-lg shadow-black/10">
-                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <i class="fa-solid fa-arrows-rotate" id="reload-icon"></i>
                 </button>
             </div>
         </div>
@@ -155,9 +155,15 @@
         };
 
         async function loadData() {
+            // Jalankan animasi putar pada ikon
+            const reloadIcon = document.getElementById('reload-icon');
+            if(reloadIcon) reloadIcon.classList.add('fa-spin');
+
             try {
                 if(fullHistory.length === 0) document.getElementById('total-saldo').innerText = "Memuat...";
-                const res = await fetch(API_URL);
+                
+                // Tambahkan parameter waktu (?t=...) agar URL selalu unik & menembus cache browser
+                const res = await fetch(API_URL + "?t=" + new Date().getTime(), { cache: 'no-store' });
                 const rawData = await res.json();
                 
                 const processedData = rawData.map((item, index) => {
@@ -182,7 +188,12 @@
 
                 fullHistory = processedData.reverse();
                 renderTable();
-            } catch (e) { alert("Gagal memuat data dari Apps Script."); }
+            } catch (e) { 
+                alert("Gagal memuat data dari Apps Script."); 
+            } finally {
+                // Hentikan animasi putar setelah data selesai dimuat atau jika terjadi error
+                if(reloadIcon) reloadIcon.classList.remove('fa-spin');
+            }
         }
 
         function renderTable() {
