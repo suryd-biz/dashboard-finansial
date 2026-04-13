@@ -164,22 +164,20 @@
 
         const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
         
-        // Pembaruan UI Hover pada Card Bank
-        // Pembaruan UI Card Bank untuk mendukung Logo Asli
-        // Pembaruan UI Card Bank untuk mendukung Logo Asli yang Seragam
+        // Pembaruan UI Card Bank untuk Ukuran Logo yang Lebih Seimbang
         const createAccountCard = (acc, currentVal, prevVal) => {
             const diff = currentVal - prevVal;
             let diffHTML = `<p class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-700/50 inline-block px-2 py-0.5 rounded-md mt-1"><i class="fa-solid fa-minus"></i> Tetap</p>`;
             if (diff > 0) diffHTML = `<p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 inline-block px-2 py-0.5 rounded-md mt-1"><i class="fa-solid fa-arrow-trend-up"></i> +${formatIDR(diff)}</p>`;
             else if (diff < 0) diffHTML = `<p class="text-[10px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 inline-block px-2 py-0.5 rounded-md mt-1"><i class="fa-solid fa-arrow-trend-down"></i> -${formatIDR(Math.abs(diff))}</p>`;
 
-            // Penyesuaian class ukuran seragam (h-7 w-20 object-contain object-left)
+            // KUNCI PERBAIKAN: Menggunakan h-6 dan max-w-[65px] di dalam wadah h-8
             const renderLogo = acc.logo.startsWith('http') 
-                ? `<img src="${acc.logo}" alt="${acc.name}" class="h-7 w-20 object-contain object-left drop-shadow-sm group-hover:scale-110 transition-transform origin-left">` 
+                ? `<img src="${acc.logo}" alt="${acc.name}" class="h-6 max-w-[65px] w-auto object-contain object-left drop-shadow-sm group-hover:scale-110 transition-transform origin-left">` 
                 : `<div class="h-7 w-7 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900 transition-colors">${acc.logo}</div>`;
 
             return `<div class="group bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg p-4 sm:p-5 rounded-3xl border border-white dark:border-slate-700 shadow-sm hover:-translate-y-2 hover:shadow-xl hover:shadow-indigo-100 dark:hover:shadow-indigo-900/20 hover:border-indigo-200 dark:hover:border-indigo-500 hover:bg-gradient-to-br hover:from-white hover:to-indigo-50 dark:hover:from-slate-800 dark:hover:to-slate-700 transition-all card-animate cursor-pointer flex flex-col">
-                    <div class="h-8 flex items-center justify-start mb-3">
+                    <div class="h-8 flex items-center justify-start mb-2">
                         ${renderLogo}
                     </div>
                     <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest truncate group-hover:text-indigo-500 transition-colors">${acc.name}</p>
