@@ -124,6 +124,24 @@
         </div>
     </div>
 
+    <div id="modal-detail" class="fixed inset-0 bg-slate-900/40 dark:bg-slate-900/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl w-full max-w-sm rounded-[2rem] p-8 shadow-2xl border border-white dark:border-slate-700">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400" id="detail-title">Detail Saldo</h3>
+                <button onclick="toggleModalDetail()" class="text-slate-400 hover:text-rose-600 bg-slate-100 hover:bg-rose-100 dark:bg-slate-700 dark:hover:bg-rose-900/50 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-1 mb-6 max-h-[50vh] overflow-y-auto pr-2" id="detail-list">
+                </div>
+            
+            <div class="pt-5 border-t border-slate-200 dark:border-slate-700">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Gabungan</p>
+                <p class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight" id="detail-total">Rp 0</p>
+                <p class="text-xs font-medium text-slate-500 mt-2" id="detail-keterangan">-</p>
+            </div>
+        </div>
+    </div>
+    
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec'; 
 
@@ -213,6 +231,7 @@
                         <td class="px-6 py-5 text-[10px] font-black text-right ${changeClass} whitespace-nowrap bg-slate-50/50 dark:bg-slate-800/30">${changeIcon} ${formatIDR(Math.abs(item.change))}</td>
                         <td class="px-6 py-5 text-[11px] font-medium text-slate-500 dark:text-slate-400">${item.keterangan}</td>
                         <td class="px-6 py-5 text-center whitespace-nowrap">
+                            <button onclick="openModalDetail('${item.raw_tanggal}')" class="text-cyan-500 hover:text-white hover:bg-cyan-500 w-8 h-8 rounded-xl transition-all shadow-sm mr-1 bg-cyan-50 dark:bg-slate-700/50" title="Lihat Detail"><i class="fa-solid fa-eye text-xs"></i></button>
                             <button onclick="openModalEdit('${item.raw_tanggal}')" class="text-indigo-400 hover:text-white hover:bg-indigo-500 w-8 h-8 rounded-xl transition-all shadow-sm mr-1" title="Edit"><i class="fa fa-pen text-xs"></i></button>
                             <button onclick="deleteData('${item.raw_tanggal}')" class="text-rose-400 hover:text-white hover:bg-rose-500 w-8 h-8 rounded-xl transition-all shadow-sm" title="Hapus"><i class="fa fa-trash text-xs"></i></button>
                         </td>
@@ -226,6 +245,31 @@
 
         function changePage(d) { currentPage += d; renderTable(); }
         function toggleModal() { document.getElementById('modal-input').classList.toggle('modal-active'); }
+        
+        // Fungsi untuk buka-tutup animasi modal detail
+        function toggleModalDetail() { 
+            document.getElementById('modal-detail').classList.toggle('modal-active'); 
+        }
+
+        // Fungsi untuk mengambil dan merender data ke dalam modal detail
+        function openModalDetail(dateStr) {
+            const targetData = fullHistory.find(d => d.raw_tanggal === dateStr);
+            if (!targetData) return;
+
+            document.getElementById('detail-title').innerText = new Date(targetData.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'});
+
+            document.getElementById('detail-list').innerHTML = accountsList.map(acc => `
+                <div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-700/30 px-2 rounded-lg transition-colors">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${acc.name}</span>
+                    <span class="text-sm font-extrabold text-slate-800 dark:text-white">${formatIDR(targetData[acc.id] || 0)}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('detail-total').innerText = formatIDR(targetData.total);
+            document.getElementById('detail-keterangan').innerHTML = targetData.keterangan !== "-" ? `<i class="fa-regular fa-comment-dots mr-1"></i> ${targetData.keterangan}` : "Tidak ada keterangan";
+
+            toggleModalDetail();
+        }
 
         function openModalNew() {
             formAction = 'insert';
