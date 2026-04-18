@@ -26,14 +26,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            /* Latar belakang halaman yang lebih elegan */
             background-attachment: fixed;
         }
         .card-animate { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .modal-active { display: flex !important; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         
-        /* Custom Scrollbar Elegan */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -47,9 +45,12 @@
         <div class="max-w-5xl mx-auto flex justify-between items-center text-white">
             <div>
                 <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-200 drop-shadow-sm">SYD Financial</h1>
-                <p class="text-indigo-200 dark:text-indigo-400 text-xs mt-1 font-medium flex items-center gap-1" id="date-now"><i class="fa-solid fa-clock fa-spin-pulse opacity-50"></i> Sinkronisasi terakhir...</p>
+                <p class="text-indigo-200 dark:text-indigo-300 text-xs mt-1 font-medium flex items-center gap-1" id="date-now"><i class="fa-solid fa-clock fa-spin-pulse opacity-50"></i> Sinkronisasi terakhir...</p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex gap-2 sm:gap-3">
+                <button id="auth-toggle" onclick="toggleAuth()" class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 p-3.5 rounded-2xl transition-all active:scale-90 shadow-lg" title="Login Admin">
+                    <i class="fa-solid fa-lock text-rose-300" id="auth-icon"></i>
+                </button>
                 <button id="theme-toggle" class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 p-3.5 rounded-2xl transition-all active:scale-90 shadow-lg">
                     <i class="fa-solid fa-moon text-indigo-100" id="theme-icon"></i>
                 </button>
@@ -66,7 +67,7 @@
             <div class="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-fuchsia-400 to-indigo-400 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
             <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-tr from-cyan-400 to-blue-400 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
             
-            <span class="relative text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-2 block group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Total Gabungan Aset</span>
+            <span class="relative text-slate-500 dark:text-slate-300 text-xs font-black uppercase tracking-[0.2em] mb-2 block group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Total Gabungan Aset</span>
             <h2 class="relative text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-800 to-violet-800 dark:from-white dark:via-indigo-200 dark:to-cyan-200 mb-6 mt-3 truncate w-full tracking-tight" id="total-saldo">Rp 0</h2>
             <div id="total-diff" class="relative inline-block text-sm font-bold px-5 py-2 rounded-full card-animate group-hover:scale-105 shadow-sm">--</div>
         </div>
@@ -81,12 +82,12 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-wider">
+                        <tr class="bg-slate-50/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-300 text-[10px] uppercase tracking-wider">
                             <th class="px-6 py-4 font-bold">Tanggal</th>
                             <th class="px-6 py-4 font-bold text-right">Saldo Total</th>
                             <th class="px-6 py-4 font-bold text-right">Selisih</th>
                             <th class="px-6 py-4 font-bold">Keterangan</th>
-                            <th class="px-6 py-4 font-bold text-center">Aksi</th>
+                            <th class="px-6 py-4 font-bold text-center" id="th-aksi" style="display: none;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="history-body" class="divide-y divide-slate-100 dark:divide-slate-700/50"></tbody>
@@ -99,9 +100,27 @@
         </div>
     </div>
 
-    <button onclick="openModalNew()" class="fixed bottom-8 right-8 md:bottom-10 md:right-10 w-16 h-16 bg-gradient-to-tr from-indigo-600 to-fuchsia-500 hover:from-indigo-500 hover:to-fuchsia-400 text-white rounded-full shadow-[0_10px_25px_rgba(99,102,241,0.5)] flex items-center justify-center text-2xl transition-all hover:scale-110 hover:rotate-90 active:scale-90 z-40">
+    <button id="fab-add" onclick="openModalNew()" style="display: none;" class="fixed bottom-8 right-8 md:bottom-10 md:right-10 w-16 h-16 bg-gradient-to-tr from-indigo-600 to-fuchsia-500 hover:from-indigo-500 hover:to-fuchsia-400 text-white rounded-full shadow-[0_10px_25px_rgba(99,102,241,0.5)] flex items-center justify-center text-2xl transition-all hover:scale-110 hover:rotate-90 active:scale-90 z-40">
         <i class="fa-solid fa-plus"></i>
     </button>
+
+    <div id="modal-pin" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl w-full max-w-sm rounded-[2rem] p-8 shadow-2xl border border-white dark:border-slate-700 text-center">
+            <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white mb-2">Mode Admin</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Masukkan PIN untuk membuka fitur Edit dan Hapus data.</p>
+            
+            <form onsubmit="submitPin(event)" class="space-y-4">
+                <input type="password" id="in-pin" placeholder="••••••" class="w-full text-center tracking-[0.5em] text-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-4 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-slate-800 dark:text-white transition-all shadow-inner" required>
+                <div class="flex gap-3">
+                    <button type="button" onclick="togglePinModal()" class="w-1/2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-bold p-3 rounded-xl transition-all active:scale-95">BATAL</button>
+                    <button type="submit" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold p-3 rounded-xl shadow-lg transition-all active:scale-95">UNLOCK</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div id="modal-input" class="fixed inset-0 bg-slate-900/40 dark:bg-slate-900/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
         <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl w-full max-w-lg rounded-[2rem] p-8 shadow-2xl overflow-y-auto max-h-[90vh] border border-white dark:border-slate-700">
@@ -113,7 +132,7 @@
             <form id="form-update" class="space-y-5">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="col-span-2">
-                        <label class="block text-xs font-black text-slate-500 mb-1.5 tracking-wider">TANGGAL UPDATE</label>
+                        <label class="block text-xs font-black text-slate-500 dark:text-slate-400 mb-1.5 tracking-wider">TANGGAL UPDATE</label>
                         <input type="date" id="in-tanggal" required class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-medium text-slate-800 dark:text-white transition-all shadow-inner">
                     </div>
                     <div><label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">BNI</label><input type="number" id="in-bni" class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-3 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-800 dark:text-white transition-all"></div>
@@ -127,7 +146,7 @@
                     <div><label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">JAGO</label><input type="number" id="in-jago" class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-3 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-800 dark:text-white transition-all"></div>
                     <div><label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">LAINNYA</label><input type="number" id="in-lain" class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-3 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-800 dark:text-white transition-all"></div>
                     <div class="col-span-2">
-                        <label class="block text-xs font-black text-slate-500 mb-1.5 tracking-wider">KETERANGAN</label>
+                        <label class="block text-xs font-black text-slate-500 dark:text-slate-400 mb-1.5 tracking-wider">KETERANGAN</label>
                         <input type="text" id="in-keterangan" placeholder="Contoh: Terima Gaji, Project PHO..." class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-800 dark:text-white transition-all">
                     </div>
                 </div>
@@ -159,6 +178,12 @@
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwNpR6fbf9N4FynWgu9wuefPBl-7kgtpZhougkmMee5eyF_NB1sUJ30zr-QCd6eXYs-oQ/exec'; 
 
+        // KODE PIN RAHASIA (Silakan ubah jika ingin PIN yang berbeda)
+        const PIN_RAHASIA = "123456";
+        
+        // Cek status role di memori browser (Guest adalah default)
+        let isAdmin = localStorage.getItem('syd_role') === 'admin';
+
         const accountsList = [
             { id: 'bni', name: 'BNI', logo: 'https://iconlogovector.com/uploads/images/2025/08/lg-689d8a5f6a7a4-wondr-by-BNI.webp' }, 
             { id: 'seabank', name: 'SeaBank', logo: 'https://cdn.brandfetch.io/idA2LVwIqH/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1768217348630' }, 
@@ -178,14 +203,70 @@
 
         const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
         
-        // Pembaruan UI Card Bank untuk Ukuran Logo yang Lebih Seimbang
+        // Update UI Berdasarkan Role Akses (Guest/Admin)
+        function updateRoleUI() {
+            const authIcon = document.getElementById('auth-icon');
+            const thAksi = document.getElementById('th-aksi');
+            const fabAdd = document.getElementById('fab-add');
+
+            if (isAdmin) {
+                // Tampilan Admin
+                authIcon.className = "fa-solid fa-unlock-keyhole text-emerald-300 group-hover:text-rose-400";
+                authIcon.parentElement.title = "Logout Admin";
+                fabAdd.style.display = "flex";
+                if(thAksi) thAksi.style.display = "table-cell";
+            } else {
+                // Tampilan Guest
+                authIcon.className = "fa-solid fa-lock text-rose-300";
+                authIcon.parentElement.title = "Login Admin";
+                fabAdd.style.display = "none";
+                if(thAksi) thAksi.style.display = "none";
+            }
+            renderTable(); // Merender ulang tabel agar kolom "Aksi" sinkron
+        }
+
+        // Fungsi Tombol Lock/Unlock
+        function toggleAuth() {
+            if (isAdmin) {
+                if (confirm("Keluar dari Mode Admin? Akses Edit/Hapus akan dikunci kembali.")) {
+                    isAdmin = false;
+                    localStorage.setItem('syd_role', 'guest');
+                    updateRoleUI();
+                }
+            } else {
+                document.getElementById('in-pin').value = '';
+                document.getElementById('modal-pin').classList.remove('hidden');
+                document.getElementById('modal-pin').classList.add('flex');
+            }
+        }
+
+        // Tutup Modal PIN
+        function togglePinModal() {
+            document.getElementById('modal-pin').classList.add('hidden');
+            document.getElementById('modal-pin').classList.remove('flex');
+        }
+
+        // Proses Submit PIN
+        function submitPin(e) {
+            e.preventDefault();
+            const inputPin = document.getElementById('in-pin').value;
+            if (inputPin === PIN_RAHASIA) {
+                isAdmin = true;
+                localStorage.setItem('syd_role', 'admin');
+                togglePinModal();
+                updateRoleUI();
+            } else {
+                alert("PIN Salah! Akses ditolak.");
+                document.getElementById('in-pin').value = '';
+            }
+        }
+
         const createAccountCard = (acc, currentVal, prevVal) => {
             const diff = currentVal - prevVal;
             let diffHTML = `<p class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-700/50 inline-block px-2 py-0.5 rounded-md mt-1"><i class="fa-solid fa-minus"></i> Tetap</p>`;
             if (diff > 0) diffHTML = `<p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 inline-block px-2 py-0.5 rounded-md mt-1"><i class="fa-solid fa-arrow-trend-up"></i> +${formatIDR(diff)}</p>`;
             else if (diff < 0) diffHTML = `<p class="text-[10px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 inline-block px-2 py-0.5 rounded-md mt-1"><i class="fa-solid fa-arrow-trend-down"></i> -${formatIDR(Math.abs(diff))}</p>`;
 
-            // KUNCI PERBAIKAN: Menggunakan h-6 dan max-w-[65px] di dalam wadah h-8
             const renderLogo = acc.logo.startsWith('http') 
                 ? `<img src="${acc.logo}" alt="${acc.name}" class="h-6 max-w-[65px] w-auto object-contain object-left drop-shadow-sm group-hover:scale-110 transition-transform origin-left">` 
                 : `<div class="h-7 w-7 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900 transition-colors">${acc.logo}</div>`;
@@ -200,14 +281,12 @@
         };
 
         async function loadData() {
-            // Jalankan animasi putar pada ikon
             const reloadIcon = document.getElementById('reload-icon');
             if(reloadIcon) reloadIcon.classList.add('fa-spin');
 
             try {
                 if(fullHistory.length === 0) document.getElementById('total-saldo').innerText = "Memuat...";
                 
-                // Tambahkan parameter waktu (?t=...) agar URL selalu unik & menembus cache browser
                 const res = await fetch(API_URL + "?t=" + new Date().getTime(), { cache: 'no-store' });
                 const rawData = await res.json();
                 
@@ -232,11 +311,10 @@
                 document.getElementById('accounts-grid').innerHTML = accountsList.map(acc => createAccountCard(acc, latestData[acc.id] || 0, prev[acc.id] || 0)).join('');
 
                 fullHistory = processedData.reverse();
-                renderTable();
+                updateRoleUI(); // Pastikan UI Role ter-refresh bersamaan dengan data
             } catch (e) { 
                 alert("Gagal memuat data dari Apps Script."); 
             } finally {
-                // Hentikan animasi putar setelah data selesai dimuat atau jika terjadi error
                 if(reloadIcon) reloadIcon.classList.remove('fa-spin');
             }
         }
@@ -250,34 +328,45 @@
                 const changeClass = item.change > 0 ? 'text-emerald-600 dark:text-emerald-400' : (item.change < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400');
                 const changeIcon = item.change > 0 ? '↑' : (item.change < 0 ? '↓' : '•');
 
+                // Kolom aksi hanya dirender jika login sebagai Admin
+                const actionButtons = isAdmin ? `
+                    <td class="px-6 py-5 text-center whitespace-nowrap">
+                        <button onclick="openModalDetail('${item.raw_tanggal}')" class="text-cyan-500 hover:text-white hover:bg-cyan-500 w-8 h-8 rounded-xl transition-all shadow-sm mr-1 bg-cyan-50 dark:bg-slate-700/50" title="Lihat Detail"><i class="fa-solid fa-eye text-xs"></i></button>
+                        <button onclick="openModalEdit('${item.raw_tanggal}')" class="text-indigo-400 hover:text-white hover:bg-indigo-500 w-8 h-8 rounded-xl transition-all shadow-sm mr-1 bg-indigo-50 dark:bg-slate-700/50" title="Edit"><i class="fa fa-pen text-xs"></i></button>
+                        <button onclick="deleteData('${item.raw_tanggal}')" class="text-rose-400 hover:text-white hover:bg-rose-500 w-8 h-8 rounded-xl transition-all shadow-sm bg-rose-50 dark:bg-slate-700/50" title="Hapus"><i class="fa fa-trash text-xs"></i></button>
+                    </td>
+                ` : `
+                    <td class="px-6 py-5 text-center whitespace-nowrap">
+                        <button onclick="openModalDetail('${item.raw_tanggal}')" class="text-cyan-500 hover:text-white hover:bg-cyan-500 w-8 h-8 rounded-xl transition-all shadow-sm bg-cyan-50 dark:bg-slate-700/50" title="Lihat Detail"><i class="fa-solid fa-eye text-xs"></i> Lihat</button>
+                    </td>
+                `;
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-transparent dark:hover:from-indigo-900/20 dark:hover:to-transparent transition-colors group">
-                        <td class="px-6 py-5 text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap"><i class="fa-regular fa-calendar text-slate-300 mr-2 group-hover:text-indigo-400 transition-colors"></i>${new Date(item.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})}</td>
+                        <td class="px-6 py-5 text-xs font-semibold text-slate-500 dark:text-slate-300 whitespace-nowrap"><i class="fa-regular fa-calendar text-slate-300 mr-2 group-hover:text-indigo-400 transition-colors"></i>${new Date(item.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})}</td>
                         <td class="px-6 py-5 text-sm font-extrabold text-slate-800 dark:text-white text-right whitespace-nowrap">${formatIDR(item.total)}</td>
                         <td class="px-6 py-5 text-[10px] font-black text-right ${changeClass} whitespace-nowrap bg-slate-50/50 dark:bg-slate-800/30">${changeIcon} ${formatIDR(Math.abs(item.change))}</td>
                         <td class="px-6 py-5 text-[11px] font-medium text-slate-500 dark:text-slate-400">${item.keterangan}</td>
-                        <td class="px-6 py-5 text-center whitespace-nowrap">
-                            <button onclick="openModalDetail('${item.raw_tanggal}')" class="text-cyan-500 hover:text-white hover:bg-cyan-500 w-8 h-8 rounded-xl transition-all shadow-sm mr-1 bg-cyan-50 dark:bg-slate-700/50" title="Lihat Detail"><i class="fa-solid fa-eye text-xs"></i></button>
-                            <button onclick="openModalEdit('${item.raw_tanggal}')" class="text-indigo-400 hover:text-white hover:bg-indigo-500 w-8 h-8 rounded-xl transition-all shadow-sm mr-1" title="Edit"><i class="fa fa-pen text-xs"></i></button>
-                            <button onclick="deleteData('${item.raw_tanggal}')" class="text-rose-400 hover:text-white hover:bg-rose-500 w-8 h-8 rounded-xl transition-all shadow-sm" title="Hapus"><i class="fa fa-trash text-xs"></i></button>
-                        </td>
+                        ${actionButtons}
                     </tr>
                 `;
             });
             document.getElementById('page-info').innerText = `Hal ${currentPage} dari ${Math.ceil(fullHistory.length / rowsPerPage) || 1}`;
             document.getElementById('btn-prev').disabled = currentPage === 1;
             document.getElementById('btn-next').disabled = currentPage >= Math.ceil(fullHistory.length / rowsPerPage);
+            
+            // Pastikan header tabel Aksi juga tersembunyi jika Guest
+            const thAksi = document.getElementById('th-aksi');
+            if(thAksi) thAksi.style.display = "table-cell"; // Kita selalu render cell, jadi header harus muncul, konten td menyesuaikan
         }
 
         function changePage(d) { currentPage += d; renderTable(); }
         function toggleModal() { document.getElementById('modal-input').classList.toggle('modal-active'); }
         
-        // Fungsi untuk buka-tutup animasi modal detail
         function toggleModalDetail() { 
             document.getElementById('modal-detail').classList.toggle('modal-active'); 
         }
 
-        // Fungsi untuk mengambil dan merender data ke dalam modal detail
         function openModalDetail(dateStr) {
             const targetData = fullHistory.find(d => d.raw_tanggal === dateStr);
             if (!targetData) return;
@@ -286,7 +375,7 @@
 
             document.getElementById('detail-list').innerHTML = accountsList.map(acc => `
                 <div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-700/30 px-2 rounded-lg transition-colors">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${acc.name}</span>
+                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">${acc.name}</span>
                     <span class="text-sm font-extrabold text-slate-800 dark:text-white">${formatIDR(targetData[acc.id] || 0)}</span>
                 </div>
             `).join('');
@@ -298,6 +387,7 @@
         }
 
         function openModalNew() {
+            if(!isAdmin) return alert("Akses Ditolak. Harap login.");
             formAction = 'insert';
             document.getElementById('modal-title').innerText = "Catat Saldo Baru";
             document.getElementById('in-tanggal').value = new Date().toISOString().split('T')[0];
@@ -307,6 +397,7 @@
         }
 
         function openModalEdit(dateStr) {
+            if(!isAdmin) return alert("Akses Ditolak. Harap login.");
             formAction = 'update';
             editOriginalTanggal = dateStr;
             const targetData = fullHistory.find(d => d.raw_tanggal === dateStr);
@@ -319,6 +410,7 @@
         }
 
         async function deleteData(dateStr) {
+            if(!isAdmin) return alert("Akses Ditolak. Harap login.");
             if (!confirm(`Yakin ingin MENGHAPUS permanen data pada tanggal ${dateStr}?`)) return;
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', tanggal: dateStr }) });
@@ -328,6 +420,8 @@
 
         document.getElementById('form-update').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!isAdmin) return alert("Akses Ditolak. Harap login.");
+
             const btn = document.getElementById('btn-submit');
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> MEMPROSES...`;
             btn.classList.add('opacity-80', 'cursor-not-allowed');
@@ -364,6 +458,8 @@
             icon.className = isDark ? 'fa-solid fa-sun text-yellow-300' : 'fa-solid fa-moon text-indigo-100';
         });
 
+        // Inisialisasi awal UI berdasarkan Role sebelum Fetch API
+        updateRoleUI();
         loadData();
     </script>
 </body>
