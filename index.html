@@ -10,16 +10,16 @@
     <meta name="description" content="Aplikasi pantau saldo rekening, dompet digital, dan rekap aset secara real-time.">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://wallet.suryadi.biz.id/">
+    <meta property="og:url" content="https://uang.suryadi.biz.id/">
     <meta property="og:title" content="SYD Financial | Dashboard Keuangan Pribadi">
     <meta property="og:description" content="Aplikasi pantau saldo rekening, dompet digital, dan rekap aset secara real-time.">
-    <meta property="og:image" content="https://wallet.suryadi.biz.id/thumbnail.png">
+    <meta property="og:image" content="https://uang.suryadi.biz.id/thumbnail.png">
     
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://wallet.suryadi.biz.id/">
+    <meta property="twitter:url" content="https://uang.suryadi.biz.id/">
     <meta property="twitter:title" content="SYD Financial | Dashboard Keuangan Pribadi">
     <meta property="twitter:description" content="Aplikasi pantau saldo rekening, dompet digital, dan rekap aset secara real-time.">
-    <meta property="twitter:image" content="https://wallet.suryadi.biz.id/thumbnail.png">
+    <meta property="twitter:image" content="https://uang.suryadi.biz.id/thumbnail.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -337,7 +337,9 @@
                     </td>
                 ` : `
                     <td class="px-6 py-5 text-center whitespace-nowrap">
-                        <button onclick="openModalDetail('${item.raw_tanggal}')" class="text-cyan-500 hover:text-white hover:bg-cyan-500 w-8 h-8 rounded-xl transition-all shadow-sm bg-cyan-50 dark:bg-slate-700/50" title="Lihat Detail"><i class="fa-solid fa-eye text-xs"></i> Lihat</button>
+                        <button onclick="openModalDetail('${item.raw_tanggal}')" class="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs font-bold text-cyan-600 bg-cyan-50 hover:bg-cyan-500 hover:text-white dark:text-cyan-400 dark:bg-slate-800 dark:hover:bg-cyan-500 dark:hover:text-white rounded-xl transition-all shadow-sm" title="Lihat Detail">
+                            <i class="fa-solid fa-eye"></i> Lihat
+                        </button>
                     </td>
                 `;
 
